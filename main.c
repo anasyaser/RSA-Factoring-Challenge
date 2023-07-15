@@ -5,37 +5,61 @@
 
 #define UNUSED __attribute__((unused))
 
-int main(UNUSED int argc, char **argv)
+FILE *file_stream(char *file_name)
 {
 	FILE *file_stream;
 
-	char *lineptr = NULL;
-	size_t buff_size = 0;
-	ssize_t bytesread = 0;
-
-	size_t number;
-
-	file_stream = fopen(*(argv + 1), "r");
+	file_stream = fopen(file_name, "r");
 	if (file_stream == NULL)
 	{
-		fprintf(stderr, "Error: can't open file%s\n", *(argv + 1));
+		fprintf(stderr, "Error: can't open file%s\n", file_name);
 		exit(EXIT_FAILURE);
 	}
+	return (file_stream);
+}
 
-	while((bytesread = getline(&lineptr, &buff_size, file_stream)) != -1)
+char *get_line(FILE *file_stream)
+{
+	size_t buff_size = 0;
+	char *lineptr = NULL;
+	ssize_t bytesread = 0;
+
+	bytesread = getline(&lineptr, &buff_size, file_stream);
+	if (bytesread == -1)
 	{
-		*(lineptr + bytesread - 1) = '\0';
-	/* if (bytesread == -1) */
-	/* { */
-	/* 	free(lineptr); */
-	/* 	fclose(file_stream); */
-	/* 	exit(EXIT_SUCCESS); */
-	/* } */
-
-		number = atoi(lineptr);
-		if ((number & 1) == 0)
-			printf("%s=%zu*%d\n", lineptr, number >> 1, 2);
-		else
-			printf("%s\n", lineptr);
+		free(lineptr);
+		fclose(file_stream);
+		exit(EXIT_SUCCESS);
 	}
+	return (lineptr);
+}
+
+void print_factors(char *num_str)
+{
+	unsigned long long int num = 0;
+	unsigned int sum = 0;
+
+	
+}
+
+int main(UNUSED int argc, char **argv)
+{
+	FILE *file_s;
+	char *cur_line = NULL;
+
+
+	file_s = file_stream(*(argv + 1));
+	while (1)
+	{
+		cur_line = get_line(file_s);
+		if (*cur_line == '\n')
+		{
+			free(cur_line);
+			continue;
+		}
+		printf("Current line: %s\n", cur_line);
+		free(cur_line);
+	}
+	fclose(file_s);
+	return (0);
 }
